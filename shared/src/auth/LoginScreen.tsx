@@ -63,4 +63,4 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
   );
 };
 
-export default LoginScreen;
+export { LoginScreen };

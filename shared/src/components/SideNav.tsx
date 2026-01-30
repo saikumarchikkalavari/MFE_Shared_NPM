@@ -204,4 +204,4 @@ const SideNav: React.FC<SideNavProps> = ({
   );
 };
 
-export default SideNav;
+export { SideNav };

@@ -2,8 +2,8 @@ import React from "react";
 import { Container, Box, Paper, Typography, Button, CssBaseline } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
-import Header from "./components/Header";
-import SideNav from "./components/SideNav";
+import { Header } from "./components/Header";
+import { SideNav } from "./components/SideNav";
 
 const App: React.FC = () => {
   const navItems = [

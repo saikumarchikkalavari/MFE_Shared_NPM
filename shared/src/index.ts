@@ -1,7 +1,7 @@
 // Library entry point - exports all shared components and utilities
-export { default as Header } from "./components/Header";
-export { default as SideNav } from "./components/SideNav";
-export { default as MainContent } from "./components/MainContent";
+export { Header } from "./components/Header";
+export { SideNav } from "./components/SideNav";
+export { MainContent } from "./components/MainContent";
 export * from "./components/mui";
 export * from "./components/aggrid";
 export * from "./components/DataTable";

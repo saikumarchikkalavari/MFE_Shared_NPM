@@ -1,0 +1,75 @@
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import typescript from '@rollup/plugin-typescript';
+import terser from '@rollup/plugin-terser';
+import peerDepsExternal from 'rollup-plugin-peer-deps-external';
+import postcss from 'rollup-plugin-postcss';
+
+export default {
+  input: 'src/index.ts',
+  output: [
+    {
+      dir: 'dist/esm',
+      format: 'esm',
+      sourcemap: true,
+      exports: 'named',
+      preserveModules: true,
+      preserveModulesRoot: 'src',
+    },
+    {
+      file: 'dist/index.cjs.js',
+      format: 'cjs',
+      sourcemap: true,
+      exports: 'named',
+    },
+  ],
+  plugins: [
+    peerDepsExternal(), // Automatically externalize peerDependencies
+    resolve({
+      extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    }),
+    commonjs(),
+    typescript({
+      tsconfig: './tsconfig.json',
+      declaration: true,
+      declarationDir: './dist/esm',
+      rootDir: './src',
+      exclude: ['**/__tests__', '**/*.test.ts', '**/*.test.tsx'],
+    }),
+    postcss({
+      extract: false,
+      modules: false,
+      minimize: true,
+    }),
+    terser({
+      compress: {
+        drop_console: false,
+        drop_debugger: true,
+        pure_funcs: ['console.log'],
+      },
+      format: {
+        comments: false,
+        preserve_annotations: true,
+      },
+      mangle: {
+        reserved: ['React', 'ReactDOM'],
+      },
+    }),
+  ],
+  external: [
+    'react',
+    'react-dom',
+    'react/jsx-runtime',
+    '@mui/material',
+    '@mui/x-date-pickers',
+    '@emotion/react',
+    '@emotion/styled',
+    '@azure/msal-browser',
+    '@azure/msal-react',
+    '@tanstack/react-query',
+    'ag-grid-community',
+    'ag-grid-react',
+    'axios',
+    'date-fns',
+  ],
+};

@@ -143,4 +143,4 @@ const MainContent: React.FC<MainContentProps> = ({
   );
 };
 
-export default MainContent;
+export { MainContent };

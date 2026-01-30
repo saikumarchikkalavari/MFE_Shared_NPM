@@ -11,4 +11,4 @@ export { msalInstance, initializeMsal } from "./msalInstance";
 export { authService } from "./authService";
 
 // Custom auth component
-export { default as LoginScreen } from "./LoginScreen";
+export { LoginScreen } from "./LoginScreen";

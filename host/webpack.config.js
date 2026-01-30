@@ -63,7 +63,20 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        loader: "ts-loader",
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              cacheDirectory: true,
+            },
+          },
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true, // Faster builds, type checking done separately
+            },
+          },
+        ],
         exclude: /node_modules\/(?!@mfe\/shared-lib)/,
       },
       {
