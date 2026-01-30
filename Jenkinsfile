@@ -29,21 +29,21 @@ pipeline {
                 stage('Host') {
                     steps {
                         dir('host') {
-                            bat 'npm ci'
+                            bat 'npm install'
                         }
                     }
                 }
                 stage('Shared') {
                     steps {
                         dir('shared') {
-                            bat 'npm ci'
+                            bat 'npm install'
                         }
                     }
                 }
                 stage('Remote') {
                     steps {
                         dir('remote') {
-                            bat 'npm ci'
+                            bat 'npm install'
                         }
                     }
                 }
