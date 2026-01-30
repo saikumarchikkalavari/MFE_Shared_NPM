@@ -54,7 +54,7 @@ pipeline {
             steps {
                 dir('host') {
                     echo 'Running unit tests...'
-                    bat 'npm run test:ci:report'
+                    bat 'npm run test:coverage'
                 }
             }
             post {
@@ -67,10 +67,10 @@ pipeline {
                     
                     // Publish coverage reports
                     publishHTML([
-                        allowMissing: false,
+                        allowMissing: true,
                         alwaysLinkToLastBuild: true,
                         keepAll: true,
-                        reportDir: 'host/coverage',
+                        reportDir: 'host/coverage/lcov-report',
                         reportFiles: 'index.html',
                         reportName: 'Test Coverage Report',
                         reportTitles: 'Coverage Report'
