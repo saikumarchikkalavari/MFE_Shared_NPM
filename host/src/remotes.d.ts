@@ -1,15 +1,32 @@
 declare module 'remote/Dashboard' {
-  const Dashboard: React.ComponentType;
+  import { ComponentType } from 'react';
+  
+  export interface DashboardConfig {
+    pageTitle: string;
+    showRefreshTime: boolean;
+    tabs: any[];
+    activeTab: string;
+    actions: {
+      showBatchDate: boolean;
+      showPauseButton: boolean;
+    };
+  }
+  
+  export interface DashboardProps {
+    config: DashboardConfig;
+  }
+  
+  const Dashboard: ComponentType<DashboardProps>;
   export default Dashboard;
 }
 
 declare module 'remote/Analytics' {
-  const Analytics: React.ComponentType;
+  const Analytics: React.ComponentType<any>;
   export default Analytics;
 }
 
 declare module 'remote/Reports' {
-  const Reports: React.ComponentType;
+  const Reports: React.ComponentType<any>;
   export default Reports;
 }
 

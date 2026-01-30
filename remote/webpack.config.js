@@ -1,22 +1,8 @@
-// Load environment variables from .env file
-require("dotenv").config();
-
 const path = require("path");
+const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
 const { FederatedTypesPlugin } = require("@module-federation/typescript");
-const Dotenv = require("dotenv-webpack");
-
-// Environment variables with defaults
-const REMOTE_PORT = process.env.REMOTE_PORT || 3001;
-const SHARED_PORT = process.env.SHARED_PORT || 5002;
-const SHARED_URL = process.env.SHARED_URL || `http://localhost:${SHARED_PORT}`;
-
-console.log("🔧 Remote Config:", {
-  REMOTE_PORT,
-  SHARED_URL,
-  NODE_ENV: process.env.NODE_ENV,
-});
 
 const federationConfig = {
   name: "remote",
@@ -48,11 +34,14 @@ const federationConfig = {
   },
 };
 
-module.exports = {
+module.exports = (env = {}) => {
+  const isAnalyze = env.analyze;
+  
+  return {
   entry: "./src/index.ts",
-  mode: process.env.NODE_ENV || "development",
+  mode: "development",
   devServer: {
-    port: REMOTE_PORT,
+    port: 3001,
     hot: true,
     historyApiFallback: true,
     static: {
@@ -65,13 +54,8 @@ module.exports = {
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
-    alias: {
-      // Force all code (including @mfe/shared-lib) to use remote's React
-      react: path.resolve(__dirname, "node_modules/react"),
-      "react-dom": path.resolve(__dirname, "node_modules/react-dom"),
-      "react/jsx-runtime": path.resolve(__dirname, "node_modules/react/jsx-runtime"),
-      "react/jsx-dev-runtime": path.resolve(__dirname, "node_modules/react/jsx-dev-runtime"),
-    },
+    // Removed React alias to enable Module Federation singleton sharing
+    // This allows host and remote to share a single React instance at runtime
   },
   module: {
     rules: [
@@ -103,9 +87,50 @@ module.exports = {
           fullySpecified: false, // This allows Webpack to resolve without the .js extension
         },
       },
+      // Override sideEffects for packages that don't declare them properly
+      {
+        test: /[\\/]node_modules[\\/](ag-grid-react|@azure\/msal-react)[\\/]/,
+        sideEffects: false,
+      },
     ],
   },
+  optimization: {
+    usedExports: true, // Enable tree shaking
+    sideEffects: false, // Assume no side effects by default
+    moduleIds: 'deterministic',
+    
+    // Simplified code splitting - let Module Federation handle shared libraries
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        // Shared code from @mfe/shared-lib (NPM package)
+        sharedLib: {
+          test: /[\/]node_modules[\/]@mfe[\/]shared-lib[\/]/,
+          name: 'shared-lib',
+          priority: 50,
+          reuseExistingChunk: true,
+        },
+        
+        // App-specific code (not from node_modules)
+        appCode: {
+          test: /[\/]src[\/]/,
+          name: 'app',
+          priority: 20,
+          minChunks: 2,
+          reuseExistingChunk: true,
+        },
+      },
+    },
+    
+    // Better runtime chunk naming
+    runtimeChunk: {
+      name: 'runtime',
+    },
+  },
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify(process.env)
+    }),
     new ModuleFederationPlugin(federationConfig),
     new FederatedTypesPlugin({
       federationConfig,
@@ -116,15 +141,10 @@ module.exports = {
       template: "./public/index.html",
       title: "Remote App",
     }),
-    new Dotenv({
-      path: "./.env", // Path to .env file
-      safe: false, // Don't load .env.example
-      systemvars: true, // Load system environment variables
-      silent: true, // Don't log missing .env file
-    }),
   ],
   output: {
     publicPath: "http://localhost:3001/",
     clean: true,
   },
+  };
 };

@@ -5,14 +5,28 @@
  * Handles component selection, lazy loading, and error boundaries.
  */
 
-import React, { Suspense } from "react";
-import { CircularProgress } from "@mui/material";
+import React, { Suspense, lazy } from "react";
+import { CircularProgress, Box } from "@mui/material";
 import { SCREEN_REGISTRY } from "../services";
 import { ScreenType } from "../types";
 import PlaceholderScreen from "./PlaceholderScreen";
-import DashboardWrapper from "./DashboardWrapper";
-import TemplateWrapper from "./TemplateWrapper";
-import RecalculationWrapper from "./RecalculationWrapper";
+
+// Lazy load heavy components with remote dependencies
+const DashboardWrapper = lazy(() => import("./DashboardWrapper"));
+const TemplateWrapper = lazy(() => import("./TemplateWrapper"));
+const RecalculationWrapper = lazy(() => import("./RecalculationWrapper"));
+
+// Better loading fallback
+const LoadingFallback = () => (
+  <Box sx={{ 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    minHeight: '400px' 
+  }}>
+    <CircularProgress size={40} />
+  </Box>
+);
 
 /**
  * Creates appropriate screen component based on page information
@@ -26,21 +40,21 @@ export const createScreenComponent = (pageName: string, moduleCode: string): Rea
   switch (screenType) {
     case ScreenType.DASHBOARD:
       return (
-        <Suspense fallback={<CircularProgress />}>
+        <Suspense fallback={<LoadingFallback />}>
           <DashboardWrapper pageName={pageName} moduleCode={moduleCode} />
         </Suspense>
       );
 
     case ScreenType.TEMPLATES:
       return (
-        <Suspense fallback={<CircularProgress />}>
+        <Suspense fallback={<LoadingFallback />}>
           <TemplateWrapper pageName={pageName} moduleCode={moduleCode} />
         </Suspense>
       );
 
     case ScreenType.RECALCULATION:
       return (
-        <Suspense fallback={<CircularProgress />}>
+        <Suspense fallback={<LoadingFallback />}>
           <RecalculationWrapper pageName={pageName} moduleCode={moduleCode} />
         </Suspense>
       );

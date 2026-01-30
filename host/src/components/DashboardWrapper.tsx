@@ -18,8 +18,22 @@ import { apiEndpoints } from "../config/api";
 import { generateDashboardConfigFromPageConfig } from "../services/config";
 import type { PageConfig } from "../types";
 
-// Import Dashboard component from remote MFE
-const Dashboard = lazy(() => import("remote/Dashboard") as Promise<{ default: React.ComponentType<any> }>);
+// Lazy load remote with proper typing
+const Dashboard = lazy(() => 
+  import("remote/Dashboard").then(module => ({
+    default: module.default
+  }))
+);
+
+// Better loading fallback with context
+const DashboardLoadingFallback = ({ pageName }: { pageName: string }) => (
+  <Box sx={{ p: 3, textAlign: "center" }}>
+    <CircularProgress />
+    <Typography variant="body2" sx={{ mt: 2 }}>
+      Loading {pageName}...
+    </Typography>
+  </Box>
+);
 
 interface DashboardWrapperProps {
   pageName: string;
@@ -59,14 +73,7 @@ const DashboardWrapper: React.FC<DashboardWrapperProps> = ({ pageName, moduleCod
 
   // Loading state
   if (isLoading) {
-    return (
-      <Box sx={{ p: 3, textAlign: "center" }}>
-        <CircularProgress />
-        <Typography variant="body2" sx={{ mt: 1 }}>
-          Loading {pageName} configuration...
-        </Typography>
-      </Box>
-    );
+    return <DashboardLoadingFallback pageName={pageName} />;
   }
 
   // Error state
@@ -85,8 +92,9 @@ const DashboardWrapper: React.FC<DashboardWrapperProps> = ({ pageName, moduleCod
 
   console.log("Rendering DashboardWrapper with config:", dashboardConfig);
 
+  // Suspense boundary ONLY around remote component
   return (
-    <Suspense fallback={<div>Loading Dashboard...</div>}>
+    <Suspense fallback={<DashboardLoadingFallback pageName={pageName} />}>
       <Dashboard config={dashboardConfig} />
     </Suspense>
   );

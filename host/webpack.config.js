@@ -1,8 +1,8 @@
 const path = require("path");
+const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
 const { FederatedTypesPlugin } = require("@module-federation/typescript");
-const Dotenv = require("dotenv-webpack");
 
 const federationConfig = {
   name: "host",
@@ -16,7 +16,7 @@ const federationConfig = {
     "react-router-dom": {
       singleton: true,
       requiredVersion: "^7.9.6",
-      eager: true,
+      eager: false, // Lazy load routing
     },
     // Load these from shared remote - don't bundle locally
     "@mui/material": { singleton: true, requiredVersion: "^6.3.0", eager: false },
@@ -34,7 +34,10 @@ const federationConfig = {
   },
 };
 
-module.exports = {
+module.exports = (env = {}) => {
+  const isAnalyze = env.analyze;
+  
+  return {
   entry: "./src/index.ts",
   mode: "development",
   devServer: {
@@ -51,13 +54,8 @@ module.exports = {
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
-    alias: {
-      // Force all code (including @mfe/shared-lib) to use host's React
-      react: path.resolve(__dirname, "node_modules/react"),
-      "react-dom": path.resolve(__dirname, "node_modules/react-dom"),
-      "react/jsx-runtime": path.resolve(__dirname, "node_modules/react/jsx-runtime"),
-      "react/jsx-dev-runtime": path.resolve(__dirname, "node_modules/react/jsx-dev-runtime"),
-    },
+    // Removed React alias to enable Module Federation singleton sharing
+    // This allows host and remote to share a single React instance at runtime
   },
   module: {
     rules: [
@@ -89,11 +87,49 @@ module.exports = {
           fullySpecified: false, // This allows Webpack to resolve without the .js extension
         },
       },
+      // Override sideEffects for packages that don't declare them properly
+      {
+        test: /[\\/]node_modules[\\/](ag-grid-react|@azure\/msal-react)[\\/]/,
+        sideEffects: false,
+      },
     ],
   },
+  optimization: {
+    usedExports: true, // Enable tree shaking
+    sideEffects: false, // Assume no side effects by default
+    moduleIds: 'deterministic',
+    
+    // Simplified code splitting - let Module Federation handle shared libraries
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        // Shared code from @mfe/shared-lib (NPM package)
+        sharedLib: {
+          test: /[\/]node_modules[\/]@mfe[\/]shared-lib[\/]/,
+          name: 'shared-lib',
+          priority: 50,
+          reuseExistingChunk: true,
+        },
+        
+        // App-specific code (not from node_modules)
+        appCode: {
+          test: /[\/]src[\/]/,
+          name: 'app',
+          priority: 20,
+          minChunks: 2,
+          reuseExistingChunk: true,
+        },
+      },
+    },
+    
+    // Better runtime chunk naming
+    runtimeChunk: {
+      name: 'runtime',
+    },
+  },
   plugins: [
-    new Dotenv({
-      systemvars: true, // Load system environment variables as well
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify(process.env)
     }),
     new ModuleFederationPlugin(federationConfig),
     new FederatedTypesPlugin({
@@ -110,4 +146,5 @@ module.exports = {
     publicPath: "http://localhost:3000/",
     clean: true,
   },
+  };
 };
