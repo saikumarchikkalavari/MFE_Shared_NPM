@@ -1,17 +1,5 @@
 require('@testing-library/jest-dom');
 
-// Mock MSAL to avoid crypto and auth dependencies
-jest.mock('@mfe/shared-lib/auth/msalInstance', () => ({
-  msalInstance: {
-    initialize: jest.fn(),
-    acquireTokenSilent: jest.fn(),
-    acquireTokenPopup: jest.fn(),
-    loginPopup: jest.fn(),
-    logout: jest.fn(),
-  },
-  initializeMsal: jest.fn(),
-}));
-
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,

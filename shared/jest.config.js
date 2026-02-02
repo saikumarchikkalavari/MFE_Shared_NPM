@@ -13,34 +13,19 @@ module.exports = {
     }],
   },
   moduleNameMapper: {
-    // AG Grid CSS imports - exact matches pointing to mock file
-    'ag-grid-community/styles/ag-grid.css': '<rootDir>/__mocks__/styleMock.js',
-    'ag-grid-community/styles/ag-theme-quartz.css': '<rootDir>/__mocks__/styleMock.js',
-    // Generic CSS/style imports
-    '\\.(css|less|scss|sass)$': '<rootDir>/__mocks__/styleMock.js',
-    // Map @mfe/shared-lib to source files (not dist) for testing
-    '^@mfe/shared-lib$': '<rootDir>/../shared/src/index.ts',
-    '^@mfe/shared-lib/(.*)$': '<rootDir>/../shared/src/$1',
-    // React modules
+    '^ag-grid-community/styles/.*$': 'identity-obj-proxy',
+    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    'ag-grid-community/styles/.*\\.css$': 'identity-obj-proxy',
     '^react$': '<rootDir>/node_modules/react',
     '^react-dom$': '<rootDir>/node_modules/react-dom',
-    '^@company/shared/(.*)$': '<rootDir>/../shared/dist/$1',
-    '^@company/shared$': '<rootDir>/../shared/dist',
-    '^shared/components/(.*)$': '<rootDir>/../shared/src/components/$1',
-    '^shared/(.*)$': '<rootDir>/../shared/src/$1',
-    '^products/(.*)$': '<rootDir>/__mocks__/remoteMock.ts',
-    '^orders/(.*)$': '<rootDir>/__mocks__/remoteMock.ts',
-    '^customers/(.*)$': '<rootDir>/__mocks__/remoteMock.ts',
   },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  transformIgnorePatterns: [
-    'node_modules/(?!(@mfe)/)',
-  ],
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
     '!src/**/*.d.ts',
     '!src/index.ts',
-    '!src/**/*.stories.tsx',
+    '!src/lib.ts',
+    '!src/bootstrap.tsx',
   ],
   coverageReporters: ['text', 'lcov', 'cobertura', 'html'],
   coverageDirectory: 'coverage',
@@ -69,4 +54,7 @@ module.exports = {
       isolatedModules: true,
     },
   },
+  testTimeout: 10000,
+  bail: false,
+  verbose: true,
 };
