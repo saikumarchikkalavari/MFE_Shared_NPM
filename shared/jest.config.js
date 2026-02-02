@@ -29,17 +29,7 @@ module.exports = {
   ],
   coverageReporters: ['text', 'lcov', 'cobertura', 'html'],
   coverageDirectory: 'coverage',
-  reporters: [
-    'default',
-    ['jest-junit', {
-      outputDirectory: 'coverage',
-      outputName: 'junit.xml',
-      classNameTemplate: '{classname}',
-      titleTemplate: '{title}',
-      ancestorSeparator: ' › ',
-      usePathForSuiteName: true,
-    }],
-  ],
+  reporters: ['default'],
   coverageThreshold: {
     global: {
       branches: 5,
