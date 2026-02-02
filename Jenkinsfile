@@ -51,7 +51,7 @@ pipeline {
         }
         
         stage('Run Tests') {
-            parallel {
+            stages {
                 stage('Host Tests') {
                     steps {
                         dir('host') {
