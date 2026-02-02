@@ -56,7 +56,7 @@ pipeline {
                     steps {
                         dir('host') {
                             echo 'Running host unit tests...'
-                            bat 'npm test -- --ci --coverage --testPathPattern="__tests__/(Button|DateSelector|DataTable)"'
+                            bat 'npm test -- --ci --coverage --testPathPatterns="__tests__/(Button|DateSelector|DataTable)"'
                         }
                     }
                 }
@@ -64,7 +64,7 @@ pipeline {
                     steps {
                         dir('shared') {
                             echo 'Running shared library unit tests...'
-                            bat 'npm test -- --ci --coverage --testPathPattern="__tests__/(Button|DateSelector|DataTable)"'
+                            bat 'npm test -- --ci --coverage --testPathPatterns="__tests__/(Button|DateSelector|DataTable)"'
                         }
                     }
                 }
