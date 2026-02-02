@@ -51,29 +51,58 @@ pipeline {
         }
         
         stage('Run Tests') {
-            steps {
-                dir('host') {
-                    echo 'Running unit tests...'
-                    bat 'npm run test:coverage'
+            parallel {
+                stage('Host Tests') {
+                    steps {
+                        dir('host') {
+                            echo 'Running host unit tests...'
+                            bat 'npm test -- --ci --coverage --testPathPattern="__tests__/(Button|DateSelector|DataTable)"'
+                        }
+                    }
+                }
+                stage('Shared Tests') {
+                    steps {
+                        dir('shared') {
+                            echo 'Running shared library unit tests...'
+                            bat 'npm test -- --ci --coverage --testPathPattern="__tests__/(Button|DateSelector|DataTable)"'
+                        }
+                    }
                 }
             }
             post {
                 always {
-                    // Publish test results
+                    // Publish test results from host
                     junit(
                         allowEmptyResults: true,
                         testResults: 'host/coverage/junit.xml'
                     )
                     
-                    // Publish coverage reports
+                    // Publish test results from shared
+                    junit(
+                        allowEmptyResults: true,
+                        testResults: 'shared/coverage/junit.xml'
+                    )
+                    
+                    // Publish coverage reports for host
                     publishHTML([
                         allowMissing: true,
                         alwaysLinkToLastBuild: true,
                         keepAll: true,
                         reportDir: 'host/coverage/lcov-report',
                         reportFiles: 'index.html',
-                        reportName: 'Test Coverage Report',
-                        reportTitles: 'Coverage Report'
+                        reportName: 'Host Test Coverage',
+                        reportTitles: 'Host Coverage Report'
+                    ])
+                    
+                    // Publish coverage reports for shared
+                    publishHTML([
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'shared/coverage/lcov-report',
+                        reportFiles: 'index.html',
+                        reportName: 'Shared Test Coverage',
+                        reportTitles: 'Shared Coverage Report'
                     ])
                 }
             }
