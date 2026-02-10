@@ -24,57 +24,56 @@ pipeline {
             }
         }
         
-        stage('Install Dependencies') {
-            parallel {
-                stage('Host') {
-                    steps {
-                        dir('host') {
-                            bat 'npm install'
-                        }
-                    }
-                }
-                stage('Shared') {
-                    steps {
-                        dir('shared') {
-                            bat 'npm install'
-                        }
-                    }
-                }
-                stage('Remote') {
-                    steps {
-                        dir('remote') {
-                            bat 'npm install'
-                        }
-                    }
+        stage('Install Dependencies - Host') {
+            steps {
+                dir('host') {
+                    echo 'Installing Host dependencies...'
+                    bat 'npm install'
                 }
             }
         }
         
-        stage('Build') {
-            parallel {
-                stage('Host') {
-                    steps {
-                        dir('host') {
-                            echo 'Building Host application...'
-                            bat 'npm run build'
-                        }
-                    }
+        stage('Install Dependencies - Shared') {
+            steps {
+                dir('shared') {
+                    echo 'Installing Shared dependencies...'
+                    bat 'npm install'
                 }
-                stage('Shared') {
-                    steps {
-                        dir('shared') {
-                            echo 'Building Shared library...'
-                            bat 'npm run build'
-                        }
-                    }
+            }
+        }
+        
+        stage('Install Dependencies - Remote') {
+            steps {
+                dir('remote') {
+                    echo 'Installing Remote dependencies...'
+                    bat 'npm install'
                 }
-                stage('Remote') {
-                    steps {
-                        dir('remote') {
-                            echo 'Building Remote application...'
-                            bat 'npm run build'
-                        }
-                    }
+            }
+        }
+        
+        stage('Build - Shared') {
+            steps {
+                dir('shared') {
+                    echo 'Building Shared library...'
+                    bat 'npm run build'
+                }
+            }
+        }
+        
+        stage('Build - Host') {
+            steps {
+                dir('host') {
+                    echo 'Building Host application...'
+                    bat 'npm run build'
+                }
+            }
+        }
+        
+        stage('Build - Remote') {
+            steps {
+                dir('remote') {
+                    echo 'Building Remote application...'
+                    bat 'npm run build'
                 }
             }
             post {
@@ -88,31 +87,29 @@ pipeline {
             }
         }
         
-        stage('Run Tests') {
-            parallel {
-                stage('Host Tests') {
-                    steps {
-                        dir('host') {
-                            echo 'Running Host unit tests...'
-                            bat 'npm test -- --ci --coverage --coverageDirectory=coverage'
-                        }
-                    }
+        stage('Run Tests - Host') {
+            steps {
+                dir('host') {
+                    echo 'Running Host unit tests...'
+                    bat 'npm test -- --ci --coverage --coverageDirectory=coverage'
                 }
-                stage('Shared Tests') {
-                    steps {
-                        dir('shared') {
-                            echo 'Running Shared library tests (AGGrid, MaterialUI, Button, DateSelector, DataTable)...'
-                            bat 'npm test -- --ci --coverage --coverageDirectory=coverage'
-                        }
-                    }
+            }
+        }
+        
+        stage('Run Tests - Shared') {
+            steps {
+                dir('shared') {
+                    echo 'Running Shared library tests (AGGrid, MaterialUI, Button, DateSelector, DataTable)...'
+                    bat 'npm test -- --ci --coverage --coverageDirectory=coverage'
                 }
-                stage('Remote Tests') {
-                    steps {
-                        dir('remote') {
-                            echo 'Running Remote application tests (AGGrid, MaterialUI, Dashboard)...'
-                            bat 'npm test -- --ci --coverage --coverageDirectory=coverage'
-                        }
-                    }
+            }
+        }
+        
+        stage('Run Tests - Remote') {
+            steps {
+                dir('remote') {
+                    echo 'Running Remote application tests (AGGrid, MaterialUI, Dashboard)...'
+                    bat 'npm test -- --ci --coverage --coverageDirectory=coverage'
                 }
             }
             post {
