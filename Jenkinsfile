@@ -24,19 +24,28 @@ pipeline {
             }
         }
         
-        stage('Install Dependencies - Host') {
+        stage('Install Dependencies - Shared') {
             steps {
-                dir('host') {
-                    echo 'Installing Host dependencies...'
+                dir('shared') {
+                    echo 'Installing Shared dependencies...'
                     bat 'npm install'
                 }
             }
         }
         
-        stage('Install Dependencies - Shared') {
+        stage('Build - Shared') {
             steps {
                 dir('shared') {
-                    echo 'Installing Shared dependencies...'
+                    echo 'Building Shared library (required for Host and Remote)...'
+                    bat 'npm run build'
+                }
+            }
+        }
+        
+        stage('Install Dependencies - Host') {
+            steps {
+                dir('host') {
+                    echo 'Installing Host dependencies...'
                     bat 'npm install'
                 }
             }
@@ -47,15 +56,6 @@ pipeline {
                 dir('remote') {
                     echo 'Installing Remote dependencies...'
                     bat 'npm install'
-                }
-            }
-        }
-        
-        stage('Build - Shared') {
-            steps {
-                dir('shared') {
-                    echo 'Building Shared library...'
-                    bat 'npm run build'
                 }
             }
         }
