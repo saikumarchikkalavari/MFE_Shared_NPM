@@ -13,7 +13,6 @@
   ],
   "scripts": {
     "build": "rollup -c",
-    "build:ci": "rollup -c rollup.config.ci.js",
     "build:webpack": "webpack --mode production --config webpack.lib.config.js",
     "build:mfe": "webpack --mode production --config webpack.config.js",
     "start": "webpack serve --config webpack.config.js",

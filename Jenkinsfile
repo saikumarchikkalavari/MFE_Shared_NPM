@@ -36,8 +36,8 @@ pipeline {
         stage('Build - Shared') {
             steps {
                 dir('shared') {
-                    echo 'Building Shared library (CI mode - no minification for faster builds)...'
-                    bat 'npm run build:ci'
+                    echo 'Building Shared library (required for Host and Remote)...'
+                    bat 'npm run build'
                 }
             }
         }

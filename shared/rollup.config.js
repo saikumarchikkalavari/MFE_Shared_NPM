@@ -1,7 +1,6 @@
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
-import terser from '@rollup/plugin-terser';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import postcss from 'rollup-plugin-postcss';
 
@@ -39,21 +38,7 @@ export default {
     postcss({
       extract: false,
       modules: false,
-      minimize: true,
-    }),
-    terser({
-      compress: {
-        drop_console: false,
-        drop_debugger: true,
-        pure_funcs: ['console.log'],
-      },
-      format: {
-        comments: false,
-        preserve_annotations: true,
-      },
-      mangle: {
-        reserved: ['React', 'ReactDOM'],
-      },
+      minimize: false, // Disabled for faster builds
     }),
   ],
   external: [
