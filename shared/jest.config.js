@@ -13,9 +13,11 @@ module.exports = {
     }],
   },
   moduleNameMapper: {
-    '^ag-grid-community/styles/.*$': 'identity-obj-proxy',
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    'ag-grid-community/styles/.*\\.css$': 'identity-obj-proxy',
+    // AG Grid CSS imports - use mock file
+    'ag-grid-community/styles/ag-grid.css': '<rootDir>/__mocks__/styleMock.js',
+    'ag-grid-community/styles/ag-theme-quartz.css': '<rootDir>/__mocks__/styleMock.js',
+    // Generic CSS/style imports
+    '\\.(css|less|scss|sass)$': '<rootDir>/__mocks__/styleMock.js',
     '^react$': '<rootDir>/node_modules/react',
     '^react-dom$': '<rootDir>/node_modules/react-dom',
   },
