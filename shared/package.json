@@ -2,6 +2,7 @@
   "name": "@mfe/shared-lib",
   "version": "1.0.0",
   "description": "Shared library for MFE components and utilities - React 19.2.3",
+  "type": "module",
   "main": "dist/index.cjs.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
