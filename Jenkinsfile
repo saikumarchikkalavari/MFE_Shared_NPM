@@ -11,7 +11,7 @@ pipeline {
     }
     
     options {
-        timeout(time: 30, unit: 'MINUTES')
+        timeout(time: 60, unit: 'MINUTES')
         timestamps()
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
@@ -46,6 +46,44 @@ pipeline {
                             bat 'npm install'
                         }
                     }
+                }
+            }
+        }
+        
+        stage('Build') {
+            parallel {
+                stage('Host') {
+                    steps {
+                        dir('host') {
+                            echo 'Building Host application...'
+                            bat 'npm run build'
+                        }
+                    }
+                }
+                stage('Shared') {
+                    steps {
+                        dir('shared') {
+                            echo 'Building Shared library...'
+                            bat 'npm run build'
+                        }
+                    }
+                }
+                stage('Remote') {
+                    steps {
+                        dir('remote') {
+                            echo 'Building Remote application...'
+                            bat 'npm run build'
+                        }
+                    }
+                }
+            }
+            post {
+                success {
+                    archiveArtifacts(
+                        artifacts: 'host/dist/**/*,shared/dist/**/*,remote/dist/**/*',
+                        fingerprint: true,
+                        allowEmptyArchive: true
+                    )
                 }
             }
         }
@@ -132,41 +170,7 @@ pipeline {
                 }
             }
         }
-        
-        stage('Build') {
-            parallel {
-                stage('Host') {
-                    steps {
-                        dir('host') {
-                            bat 'npm run build'
-                        }
-                    }
-                }
-                stage('Shared') {
-                    steps {
-                        dir('shared') {
-                            bat 'npm run build'
-                        }
-                    }
-                }
-                stage('Remote') {
-                    steps {
-                        dir('remote') {
-                            bat 'npm run build'
-                        }
-                    }
-                }
-            }
-            post {
-                success {
-                    archiveArtifacts(
-                        artifacts: 'host/dist/**/*,shared/dist/**/*,remote/dist/**/*',
-                        fingerprint: true,
-                        allowEmptyArchive: true
-                    )
-                }
-            }
-        }
+
     }
     
     post {
