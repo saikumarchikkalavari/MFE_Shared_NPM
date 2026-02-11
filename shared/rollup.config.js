@@ -38,7 +38,7 @@ export default {
     postcss({
       extract: false,
       modules: false,
-      minimize: false, // Disabled for faster builds
+      minimize: true, // Disabled for faster builds
     }),
   ],
   external: [
