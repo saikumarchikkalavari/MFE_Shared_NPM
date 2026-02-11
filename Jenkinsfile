@@ -24,54 +24,45 @@ pipeline {
             }
         }
         
-        stage('Install Dependencies - Shared') {
+        stage('Install & Build - Shared') {
             steps {
                 dir('shared') {
                     echo 'Installing Shared dependencies...'
+                    echo '================================================'
+                    echo 'Shared Install Start Time: ' + new Date().toString()
+                    echo '================================================'
                     bat 'npm install'
-                }
-            }
-        }
-        
-        stage('Build - Shared') {
-            steps {
-                dir('shared') {
+                    echo '================================================'
+                    echo 'Shared Install End Time: ' + new Date().toString()
+                    echo '================================================'
+                    
                     echo 'Building Shared library with detailed performance logging...'
                     echo '================================================'
-                    echo 'Build Start Time: ' + new Date().toString()
+                    echo 'Shared Build Start Time: ' + new Date().toString()
                     echo '================================================'
                     bat '''
                         echo Building with performance profiling...
                         npm run build:perf
                     '''
                     echo '================================================'
-                    echo 'Build End Time: ' + new Date().toString()
+                    echo 'Shared Build End Time: ' + new Date().toString()
                     echo '================================================'
                 }
             }
         }
         
-        stage('Install Dependencies - Host') {
+        stage('Install & Build - Host') {
             steps {
                 dir('host') {
                     echo 'Installing Host dependencies...'
+                    echo '================================================'
+                    echo 'Host Install Start Time: ' + new Date().toString()
+                    echo '================================================'
                     bat 'npm install'
-                }
-            }
-        }
-        
-        stage('Install Dependencies - Remote') {
-            steps {
-                dir('remote') {
-                    echo 'Installing Remote dependencies...'
-                    bat 'npm install'
-                }
-            }
-        }
-        
-        stage('Build - Host') {
-            steps {
-                dir('host') {
+                    echo '================================================'
+                    echo 'Host Install End Time: ' + new Date().toString()
+                    echo '================================================'
+                    
                     echo 'Building Host application...'
                     echo '================================================'
                     echo 'Host Build Start Time: ' + new Date().toString()
@@ -84,9 +75,18 @@ pipeline {
             }
         }
         
-        stage('Build - Remote') {
+        stage('Install & Build - Remote') {
             steps {
                 dir('remote') {
+                    echo 'Installing Remote dependencies...'
+                    echo '================================================'
+                    echo 'Remote Install Start Time: ' + new Date().toString()
+                    echo '================================================'
+                    bat 'npm install'
+                    echo '================================================'
+                    echo 'Remote Install End Time: ' + new Date().toString()
+                    echo '================================================'
+                    
                     echo 'Building Remote application...'
                     echo '================================================'
                     echo 'Remote Build Start Time: ' + new Date().toString()
