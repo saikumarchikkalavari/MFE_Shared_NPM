@@ -21,7 +21,7 @@ const federationConfig = {
   shared: {
     react: { singleton: true, requiredVersion: "^19.2.3", eager: true },
     "react-dom": { singleton: true, requiredVersion: "^19.2.3", eager: true },
-    "react-router-dom": { singleton: true, requiredVersion: "^7.9.6" },
+    "react-router-dom": { singleton: true, requiredVersion: "^7.9.6", eager: true },
     // "@mui/material": { singleton: true, requiredVersion: "^6.3.0" },
     // "@mui/icons-material": { singleton: true, requiredVersion: "^6.3.0" },
     // "@mui/x-date-pickers": { singleton: true, requiredVersion: "^8.22.0" },

@@ -13,6 +13,10 @@
   ],
   "scripts": {
     "build": "rollup -c",
+    "build:dev": "rollup -c --environment NODE_ENV:development",
+    "build:perf": "rollup -c --perf",
+    "build:verbose": "rollup -c --perf --environment VERBOSE:true",
+    "build:analyze": "rollup -c --environment ANALYZE:true",
     "build:webpack": "webpack --mode production --config webpack.lib.config.js",
     "build:mfe": "webpack --mode production --config webpack.config.js",
     "start": "webpack serve --config webpack.config.js",

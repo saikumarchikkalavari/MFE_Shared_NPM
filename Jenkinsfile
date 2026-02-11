@@ -36,8 +36,17 @@ pipeline {
         stage('Build - Shared') {
             steps {
                 dir('shared') {
-                    echo 'Building Shared library (required for Host and Remote)...'
-                    bat 'npm run build'
+                    echo 'Building Shared library with detailed performance logging...'
+                    echo '================================================'
+                    echo 'Build Start Time: ' + new Date().toString()
+                    echo '================================================'
+                    bat '''
+                        echo Building with performance profiling...
+                        npm run build:perf
+                    '''
+                    echo '================================================'
+                    echo 'Build End Time: ' + new Date().toString()
+                    echo '================================================'
                 }
             }
         }
@@ -64,7 +73,13 @@ pipeline {
             steps {
                 dir('host') {
                     echo 'Building Host application...'
+                    echo '================================================'
+                    echo 'Host Build Start Time: ' + new Date().toString()
+                    echo '================================================'
                     bat 'npm run build'
+                    echo '================================================'
+                    echo 'Host Build End Time: ' + new Date().toString()
+                    echo '================================================'
                 }
             }
         }
@@ -73,7 +88,13 @@ pipeline {
             steps {
                 dir('remote') {
                     echo 'Building Remote application...'
+                    echo '================================================'
+                    echo 'Remote Build Start Time: ' + new Date().toString()
+                    echo '================================================'
                     bat 'npm run build'
+                    echo '================================================'
+                    echo 'Remote Build End Time: ' + new Date().toString()
+                    echo '================================================'
                 }
             }
             post {
