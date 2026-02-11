@@ -4,21 +4,23 @@ import typescript from '@rollup/plugin-typescript';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import postcss from 'rollup-plugin-postcss';
 
+const isCI = process.env.CI === 'true';
+
 export default {
   input: 'src/index.ts',
   output: [
     {
       dir: 'dist/esm',
       format: 'esm',
-      sourcemap: true,
+      sourcemap: !isCI,
       exports: 'named',
-      preserveModules: true,
+      preserveModules: !isCI, // Single bundle in CI for faster writes
       preserveModulesRoot: 'src',
     },
     {
       file: 'dist/index.cjs.js',
       format: 'cjs',
-      sourcemap: true,
+      sourcemap: !isCI,
       exports: 'named',
     },
   ],
@@ -30,15 +32,19 @@ export default {
     commonjs(),
     typescript({
       tsconfig: './tsconfig.json',
-      declaration: true,
+      declaration: !isCI, // Skip type declarations in CI
       declarationDir: './dist/esm',
       rootDir: './src',
       exclude: ['**/__tests__', '**/*.test.ts', '**/*.test.tsx'],
+      compilerOptions: isCI ? {
+        skipLibCheck: true,
+        incremental: true,
+      } : undefined,
     }),
     postcss({
       extract: false,
       modules: false,
-      minimize: true, // Disabled for faster builds
+      minimize: false, // Disabled for faster builds
     }),
   ],
   external: [
